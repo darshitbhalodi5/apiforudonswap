@@ -53,7 +53,7 @@ app.get("/tokens.json", async (req, res) => {
         symbol: item.symbol,
         name: item.name,
         decimals: Number(item.decimals),
-        tags: ["ERC-20"],
+        tags: ["defi"],
       };
 
       // Add logoURI if it's not null
