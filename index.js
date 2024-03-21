@@ -26,13 +26,14 @@ app.get('/', async (req, res) => {
 });
 
 app.get('/tokensList', (req, res) => {
-  fs.readFile('updatedToken.json', 'utf8', (err, data) => {
+  const tokenFilePath = path.join(__dirname, 'updatedToken.json');
+  fs.readFile(tokenFilePath, 'utf8', (err, data) => {
       if (err) {
           console.error(err);
           res.status(500).json({ error: 'Unable to read JavaScript file' });
           return;
       }
-      res.json({ jsFileContents: data });
+      res.json({ data });
   });
 });
 
