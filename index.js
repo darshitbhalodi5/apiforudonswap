@@ -21,8 +21,11 @@ const fetchTokens = async () => {
 // Schedule periodic updates
 setInterval(fetchTokens, scanInterval);
 
+app.get('/', async (req, res) => {
+  res.json({ message: 'it is working' });
+});
 // Endpoint to get the token list
-app.get('/tokens', async (req, res) => {
+app.get('/api/tokens', async (req, res) => {
     try {
         let updatedTokens = JSON.parse(fs.readFileSync('updatedToken.json', 'utf8'));
 
@@ -68,7 +71,7 @@ const tokenListPath = 'updatedToken.json';
 app.use(express.json());
 //https://tryroll.com/wp-content/uploads/2018/11/cropped-icon-270x270.png
 // Endpoint to update the logoURI of a token
-app.post('/addlogoURI', (req, res) => {
+app.post('/api/addlogoURI', (req, res) => {
   try {
     const { address, url } = req.body;
 
