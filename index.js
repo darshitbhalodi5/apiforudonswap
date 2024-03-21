@@ -25,10 +25,21 @@ app.get('/', async (req, res) => {
   res.json({ message: 'it is working' });
 });
 
+app.get('/tokensList', (req, res) => {
+  fs.readFile('updatedToken.json', 'utf8', (err, data) => {
+      if (err) {
+          console.error(err);
+          res.status(500).json({ error: 'Unable to read JavaScript file' });
+          return;
+      }
+      res.json({ jsFileContents: data });
+  });
+});
+
 // Endpoint to get the token list
 app.get('/tokens', async (req, res) => {
     try {
-        let updatedTokens = JSON.parse(fs.readFileSync('/updatedToken.json', 'utf8'));
+        let updatedTokens = JSON.parse(fs.readFileSync('updatedToken.json', 'utf8'));
 
         // let data = await fetchTokens();
 
