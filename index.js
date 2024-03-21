@@ -1,5 +1,6 @@
 const axios = require('axios');
 const express = require('express');
+const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
 const app = express();
@@ -8,6 +9,8 @@ const port = 3000;
 const scanInterval = 3600000;
 
 app.use(express.json());
+app.use(cors());
+
 
 const fetchTokens = async () => {
     try {
