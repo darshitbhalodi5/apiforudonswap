@@ -76,9 +76,12 @@ app.get("/tokens.json", async (req, res) => {
 
     fs.writeFileSync(tokenFilePath, JSON.stringify(updatedTokens, null, 2));
 
-    updatedTokens = JSON.parse(fs.readFileSync(tokenFilePath, "utf8"));
+    // updatedTokens = JSON.parse(fs.readFileSync(tokenFilePath, "utf8"));
+    // console.log('tokenDetails',tokenDetails);
+    // res.json(updatedTokens);
    
-    res.json(updatedTokens);
+    // res.json(updatedTokens);
+    res.sendFile(tokenFilePath);
 
   } catch (error) {
     console.error("Error getting token list:", error);
