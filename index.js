@@ -24,6 +24,11 @@ setInterval(fetchTokens, scanInterval);
 app.get('/', async (req, res) => {
   res.json({ message: 'it is working' });
 });
+
+app.get('/hello', async (req, res) => {
+  res.json({ message: "This is hello endpoint. Hope, it's working fine!" });
+});
+
 // Endpoint to get the token list
 app.get('/tokens', async (req, res) => {
     try {
