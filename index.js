@@ -26,17 +26,17 @@ app.get('/', async (req, res) => {
   res.json({ message: 'it is working' });
 });
 
-app.get('/tokensList', (req, res) => {
-  const tokenFilePath = path.join(__dirname, 'updatedToken.json');
-  fs.readFile(tokenFilePath, 'utf8', (err, data) => {
-      if (err) {
-          console.error(err);
-          res.status(500).json({ error: 'Unable to read JavaScript file' });
-          return;
-      }
-      res.json({ data });
-  });
-});
+// app.get('/tokensList', (req, res) => {
+//   const tokenFilePath = path.join(__dirname, 'updatedToken.json');
+//   fs.readFile(tokenFilePath, 'utf8', (err, data) => {
+//       if (err) {
+//           console.error(err);
+//           res.status(500).json({ error: 'Unable to read JavaScript file' });
+//           return;
+//       }
+//       res.json({ data });
+//   });
+// });
 
 // Endpoint to get the token list
 app.get('/tokens', async (req, res) => {
@@ -72,7 +72,7 @@ app.get('/tokens', async (req, res) => {
             }
         });
 
-        fs.writeFileSync('updatedToken.json', JSON.stringify(updatedTokens, null, 2));
+        fs.writeFileSync(tokenFilePath, JSON.stringify(updatedTokens, null, 2));
 
         res.json(updatedTokens);
     } catch (error) {
