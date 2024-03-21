@@ -16,28 +16,6 @@
   "tokens": [
     {
       "chainId": 919,
-      "address": "0x4Bd692dbA81074BC2FA9abDcffE7324680d7A1c1",
-      "symbol": "PIX",
-      "name": "Pixar peeps",
-      "decimals": 18,
-      "logoURI": "https://tryroll.com/wp-content/uploads/2018/11/cropped-icon-270x270.png",
-      "tags": [
-        "defi"
-      ]
-    },
-    {
-      "chainId": 919,
-      "address": "0xF7ca2401709BC01Eba07d46c8d59e865C983e1AC",
-      "symbol": "LAMP",
-      "name": "Pixar Lamps",
-      "decimals": 18,
-      "logoURI": "https://roll-token.s3.amazonaws.com/AIN/b588d1ee-ea2f-47fe-a591-94f12622bc63",
-      "tags": [
-        "defi"
-      ]
-    },
-    {
-      "chainId": 919,
       "address": "0x96A415829e30aC1CcE7F08CFAdffb196f33e64DB",
       "symbol": "A72",
       "name": "Abah072",
@@ -134,8 +112,7 @@
       "decimals": 18,
       "tags": [
         "ERC-20"
-      ],
-      "logoURI": "abdsjk"
+      ]
     },
     {
       "chainId": 919,
