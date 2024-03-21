@@ -25,46 +25,40 @@ app.get('/', async (req, res) => {
   res.json({ message: 'it is working' });
 });
 
-app.get('/data', async (req, res) => {
-  const response = await axios.get('https://sepolia.explorer.mode.network/api/v2/tokens?type=ERC-20');
-  data = response.data;
-  res.json(data);
-});
-
 // Endpoint to get the token list
 app.get('/tokens', async (req, res) => {
     try {
         let updatedTokens = JSON.parse(fs.readFileSync('updatedToken.json', 'utf8'));
 
-        let data = await fetchTokens();
+        // let data = await fetchTokens();
 
         // Add new tokens with our structure
-        data.items.forEach(item => {
-            const token = {
-                chainId: 919,
-                address: item.address,
-                symbol: item.symbol,
-                name: item.name,
-                decimals: Number(item.decimals),
-                tags: ['ERC-20']
-            };
+        // data.items.forEach(item => {
+        //     const token = {
+        //         chainId: 919,
+        //         address: item.address,
+        //         symbol: item.symbol,
+        //         name: item.name,
+        //         decimals: Number(item.decimals),
+        //         tags: ['ERC-20']
+        //     };
 
             // Add logoURI if it's not null
-            if (item.icon_url !== null) {
-                token.logoURI = item.icon_url;
-            }
+            // if (item.icon_url !== null) {
+            //     token.logoURI = item.icon_url;
+            // }
 
             //find the token in the updatedTokens and ensure that duplicate token can't be added
-            if (
-                !updatedTokens.tokens.find(
-                    t => t.address === token.address && t.symbol === token.symbol && t.name === token.name
-                )
-            ) {
-                updatedTokens.tokens.push(token);
-            }
-        });
+        //     if (
+        //         !updatedTokens.tokens.find(
+        //             t => t.address === token.address && t.symbol === token.symbol && t.name === token.name
+        //         )
+        //     ) {
+        //         updatedTokens.tokens.push(token);
+        //     }
+        // });
 
-        fs.writeFileSync('updatedToken.json', JSON.stringify(updatedTokens, null, 2));
+        // fs.writeFileSync('updatedToken.json', JSON.stringify(updatedTokens, null, 2));
 
         res.json(updatedTokens);
     } catch (error) {
@@ -75,8 +69,6 @@ app.get('/tokens', async (req, res) => {
 
 const tokenListPath = 'updatedToken.json';
 
-app.use(express.json());
-//https://tryroll.com/wp-content/uploads/2018/11/cropped-icon-270x270.png
 // Endpoint to update the logoURI of a token
 app.post('/addlogoURI', (req, res) => {
   try {
