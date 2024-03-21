@@ -25,8 +25,10 @@ app.get('/', async (req, res) => {
   res.json({ message: 'it is working' });
 });
 
-app.get('/hello', async (req, res) => {
-  res.json({ message: "This is hello endpoint. Hope, it's working fine!" });
+app.get('/data', async (req, res) => {
+  const response = await axios.get('https://sepolia.explorer.mode.network/api/v2/tokens?type=ERC-20');
+  data = response.data;
+  res.json(data);
 });
 
 // Endpoint to get the token list
