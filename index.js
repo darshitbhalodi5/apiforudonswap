@@ -28,7 +28,7 @@ app.get('/', async (req, res) => {
 // Endpoint to get the token list
 app.get('/tokens', async (req, res) => {
     try {
-        let updatedTokens = JSON.parse(fs.readFileSync('./updatedToken.json', 'utf8'));
+        let updatedTokens = JSON.parse(fs.readFileSync('/updatedToken.json', 'utf8'));
 
         // let data = await fetchTokens();
 
