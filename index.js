@@ -6,7 +6,6 @@ const port = 3000;
 
 const scanInterval = 3600000;
 
-app.use(express.static(__dirname));
 app.use(express.json());
 
 const fetchTokens = async () => {
