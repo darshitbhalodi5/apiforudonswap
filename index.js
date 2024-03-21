@@ -22,22 +22,6 @@ const fetchTokens = async () => {
 // Schedule periodic updates
 setInterval(fetchTokens, scanInterval);
 
-app.get('/', async (req, res) => {
-  res.json({ message: 'it is working' });
-});
-
-// app.get('/tokensList', (req, res) => {
-//   const tokenFilePath = path.join(__dirname, 'updatedToken.json');
-//   fs.readFile(tokenFilePath, 'utf8', (err, data) => {
-//       if (err) {
-//           console.error(err);
-//           res.status(500).json({ error: 'Unable to read JavaScript file' });
-//           return;
-//       }
-//       res.json({ data });
-//   });
-// });
-
 // Endpoint to get the token list
 app.get('/tokens', async (req, res) => {
     try {
