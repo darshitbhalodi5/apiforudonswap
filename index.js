@@ -11,6 +11,22 @@ const scanInterval = 3600000;
 app.use(express.json());
 app.use(cors());
 
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
+
+// Helper function to authenticate token
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+  if (token == null) return res.sendStatus(401);
+
+  jwt.verify(token, process.env.SECRET_KEY, (err, user) => {
+      if (err) return res.sendStatus(403);
+      req.user = user;
+      next();
+  });
+}
+
 // Construct the path to Tokens.json file
 const tokensFilePath = path.join(__dirname, 'Tokens.json');
 
@@ -26,36 +42,31 @@ const fetchTokens = async () => {
 }
 
 // const fetchTokens = async () => {
-//     try {
-//         let tokens = [];
-//         let nextPageParams = null;
+//   try {
+//     const allTokens = [];
+//     let nextPageParams = null;
 
-//         // Fetch tokens until there are no more pages
-//         while (true) {
-//             const url = nextPageParams
-//                 ? `https://sepolia.explorer.mode.network/api/v2/tokens?type=ERC-20&contract_address_hash=${nextPageParams.contract_address_hash}`
-//                 : 'https://sepolia.explorer.mode.network/api/v2/tokens?type=ERC-20';
+//     do {
+//       const url = nextPageParams
+//         ? `https://sepolia.explorer.mode.network/api/v2/tokens?type=ERC-20&${new URLSearchParams(nextPageParams).toString()}`
+//         : "https://sepolia.explorer.mode.network/api/v2/tokens?type=ERC-20";
 
-//             const response = await axios.get(url);
-//             const data = response.data;
+//       const response = await axios.get(url);
+//       const responseData = response.data;
 
-//             // Add tokens to the list
-//             tokens = tokens.concat(data.items);
+//       // Add the tokens from the current page to the list
+//       allTokens.push(...responseData.items);
 
-//             // Check if there are more pages
-//             if (data.next_page_params) {
-//                 nextPageParams = data.next_page_params;
-//             } else {
-//                 break;
-//             }
-//         }
+//       // Check if there are more pages available
+//       nextPageParams = responseData.next_page_params;
+//     } while (nextPageParams);
 
-//         return tokens;
-//     } catch (error) {
-//         console.error('Error fetching tokens:', error.message);
-//         throw new Error('Failed to fetch tokens');
-//     }
-// }
+//     return allTokens;
+//   } catch (error) {
+//     console.error('Error fetching tokens:', error);
+//     return [];
+//   }
+// };
 
 // Refresh tokens every 1 hour
 setInterval(fetchTokens, scanInterval);
@@ -155,6 +166,56 @@ app.post("/addlogoURI", (req, res) => {
       res.status(500).json({ error: "Internal server error" });
     }
   });
+
+  app.post('/login', (req, res) => {
+    // Assuming you have a user object with id and username
+    const user = { id: 1, username: 'Darshit' };
+
+    // Sign the token using your secret key
+    jwt.sign({ user }, process.env.SECRET_KEY, (err, token) => {
+        if (err) {
+            console.error('Error signing token:', err);
+            return res.status(500).json({ error: 'Failed to sign token' });
+        }
+        res.json({ token });
+    });
+});
+
+// Endpoint to add new token to Tokens.json file ==> Fourth Requirement
+app.get("/tokenAddress/:address", authenticateToken, async (req, res) => {
+    try {
+        let updatedTokens = JSON.parse(fs.readFileSync(tokensFilePath, "utf8"));
+        const tokenAddress = req.params.address;
+
+        // Check if token with given address already exists
+        if (!updatedTokens.tokens.find((t) => t.address === tokenAddress)) {
+            const response = await axios.get(`https://sepolia.explorer.mode.network/api/v2/tokens/${tokenAddress}`);
+            const tokenData = response.data;
+            const token = {
+                chainId: 919,
+                address: tokenData.address,
+                symbol: tokenData.symbol,
+                name: tokenData.name,
+                decimals: Number(tokenData.decimals),
+                tags: ["ERC-20"],
+            };
+
+            // Add logoURI if it's not null
+            if (tokenData.icon_url !== null) {
+                token.logoURI = tokenData.icon_url;
+            }
+
+            updatedTokens.tokens.push(token);
+            fs.writeFileSync(tokensFilePath, JSON.stringify(updatedTokens, null, 2));
+        }
+
+        res.json(updatedTokens.tokens);
+    } catch (error) {
+        console.error("Error fetching or adding token:", error);
+        return res.status(500).json({ error: "Failed to fetch or add token" });
+    }
+});
+
 
 // Start the server;
 app.listen(port, () => {
