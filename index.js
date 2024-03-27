@@ -64,8 +64,51 @@ const fetchTokens = async () => {
   }
 };
 
-const scanInterval = 3600000;
-setInterval(fetchTokens, scanInterval);
+// Function to update Tokens.json file every 1 hour
+const updateTokensPeriodically = async () => {
+    try {
+      const data = await fetchTokens();
+      if (data.items) {
+        data.items.forEach((item) => {
+          const token = {
+            chainId: 919,
+            address: item.address,
+            symbol: item.symbol,
+            name: item.name,
+            decimals: Number(item.decimals),
+            tags: ["ERC-20"],
+          };
+  
+          if (item.icon_url !== null) {
+            token.logoURI = item.icon_url;
+          }
+  
+          if (
+            !updatedTokens.tokens.find(
+              (t) =>
+                t.address === token.address &&
+                t.symbol === token.symbol &&
+                t.name === token.name
+            )
+          ) {
+            console.log(token);
+            updatedTokens.tokens.push(token);
+          }
+        });
+      }
+  
+      fs.writeFileSync(tokensFilePath, JSON.stringify(updatedTokens, null, 2));
+      console.log("Tokens.json updated successfully.");
+    } catch (error) {
+      console.error("Error updating Tokens.json:", error);
+    }
+  };
+  
+  // Update Tokens.json file initially
+  updateTokensPeriodically();
+  
+  // Update Tokens.json file every 1 hour
+  setInterval(updateTokensPeriodically, 15 * 1000); // 1 
 
 // Endpoint to fetch tokens from Tokens.json file ==> First Requirement
 app.get("/tokens", (req, res) => {
@@ -87,9 +130,6 @@ app.get("/tokenDetails", async (req, res) => {
     try {
       let updatedTokens = JSON.parse(fs.readFileSync(tokensFilePath, "utf8"));
       let data = await fetchTokens();
-      console.log("data", data);
-      console.log("items", data.items);
-      // 0xF7ca2401709BC01Eba07d46c8d59e865C983e1AC
   
       // Check if data.items is defined
       if (data.items) {
@@ -189,42 +229,6 @@ app.post("/login", (req, res) => {
 });
 
 // Endpoint to add new token to Tokens.json file ==> Fourth Requirement
-// app.get("/tokenAddress/:address", authenticateToken, async (req, res) => {
-//   try {
-//     let updatedTokens = JSON.parse(fs.readFileSync(tokensFilePath, "utf8"));
-//     const tokenAddress = req.params.address;
-
-//     // Check if token with given address already exists
-//     if (!updatedTokens.tokens.find((t) => t.address === tokenAddress)) {
-//       const response = await axios.get(
-//         `https://sepolia.explorer.mode.network/api/v2/tokens/${tokenAddress}`
-//       );
-//       const tokenData = response.data;
-//       const token = {
-//         chainId: 919,
-//         address: tokenData.address,
-//         symbol: tokenData.symbol,
-//         name: tokenData.name,
-//         decimals: Number(tokenData.decimals),
-//         tags: ["ERC-20"],
-//       };
-
-//       // Add logoURI if it's not null
-//       if (tokenData.icon_url !== null) {
-//         token.logoURI = tokenData.icon_url;
-//       }
-
-//       updatedTokens.tokens.push(token);
-//       fs.writeFileSync(tokensFilePath, JSON.stringify(updatedTokens, null, 2));
-//     }
-
-//     res.json(updatedTokens.tokens);
-//   } catch (error) {
-//     console.error("Error fetching or adding token:", error);
-//     return res.status(500).json({ error: "Failed to fetch or add token" });
-//   }
-// });
-
 app.post("/tokenAddress", authenticateToken, async (req, res) => {
     try {
       const { address } = req.body;
