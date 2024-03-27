@@ -94,6 +94,7 @@ const updateTokensPeriodically = async () => {
           ) {
             console.log(token);
             updatedTokens.tokens.push(token);
+            console.log("New token added:", token);
           }
         });
       }
@@ -109,7 +110,7 @@ const updateTokensPeriodically = async () => {
   updateTokensPeriodically();
   
   // Update Tokens.json file every 1 hour
-  setInterval(updateTokensPeriodically, 15 * 1000); // 1 
+  setInterval(updateTokensPeriodically,  60*60*1000); // 1 
 
 // Endpoint to fetch tokens from Tokens.json file ==> First Requirement
 app.get("/tokens", (req, res) => {
