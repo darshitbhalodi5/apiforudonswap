@@ -66,6 +66,7 @@ const fetchTokens = async () => {
 
 // Function to update Tokens.json file every 1 hour
 const updateTokensPeriodically = async () => {
+    let updatedTokens = JSON.parse(fs.readFileSync(tokensFilePath, "utf8"));
     try {
       const data = await fetchTokens();
       if (data.items) {
