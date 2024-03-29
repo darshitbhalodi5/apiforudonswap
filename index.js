@@ -64,54 +64,6 @@ const fetchTokens = async () => {
   }
 };
 
-// Function to update Tokens.json file every 1 hour
-const updateTokensPeriodically = async () => {
-    let updatedTokens = JSON.parse(fs.readFileSync(tokensFilePath, "utf8"));
-    try {
-      const data = await fetchTokens();
-      if (data.items) {
-        data.items.forEach((item) => {
-          const token = {
-            chainId: 919,
-            address: item.address,
-            symbol: item.symbol,
-            name: item.name,
-            decimals: Number(item.decimals),
-            tags: ["ERC-20"],
-          };
-  
-          if (item.icon_url !== null) {
-            token.logoURI = item.icon_url;
-          }
-  
-          if (
-            !updatedTokens.tokens.find(
-              (t) =>
-                t.address === token.address &&
-                t.symbol === token.symbol &&
-                t.name === token.name
-            )
-          ) {
-            console.log(token);
-            updatedTokens.tokens.push(token);
-            console.log("New token added:", token);
-          }
-        });
-      }
-  
-      fs.writeFileSync(tokensFilePath, JSON.stringify(updatedTokens, null, 2));
-      console.log("Tokens.json updated successfully.");
-    } catch (error) {
-      console.error("Error updating Tokens.json:", error);
-    }
-  };
-  
-  // Update Tokens.json file initially
-  updateTokensPeriodically();
-  
-  // Update Tokens.json file every 1 hour
-  setInterval(updateTokensPeriodically,  60*60*1000); // 1 
-
 // Endpoint to fetch tokens from Tokens.json file ==> First Requirement
 app.get("/tokens", (req, res) => {
   try {
@@ -126,50 +78,6 @@ app.get("/tokens", (req, res) => {
     res.status(500).json({ error: "Failed to fetch tokens" });
   }
 });
-
-// Endpoint to update json file if some token missing ==> Second Requirement
-app.get("/tokenDetails", async (req, res) => {
-    try {
-      let updatedTokens = JSON.parse(fs.readFileSync(tokensFilePath, "utf8"));
-      let data = await fetchTokens();
-  
-      // Check if data.items is defined
-      if (data.items) {
-        data.items.forEach((item) => {
-          const token = {
-            chainId: 919,
-            address: item.address,
-            symbol: item.symbol,
-            name: item.name,
-            decimals: Number(item.decimals),
-            tags: ["ERC-20"],
-          };
-  
-          if (item.icon_url !== null) {
-            token.logoURI = item.icon_url;
-          }
-  
-          if (
-            !updatedTokens.tokens.find(
-              (t) =>
-                t.address === token.address &&
-                t.symbol === token.symbol &&
-                t.name === token.name
-            )
-          ) {
-            // console.log("t", t);
-            updatedTokens.tokens.push(token);
-          }
-        });
-      }
-  
-      fs.writeFileSync(tokensFilePath, JSON.stringify(updatedTokens, null, 2));
-      res.json(updatedTokens.tokens);
-    } catch (error) {
-      console.error("Error fetching tokens:", error);
-      return res.status(500).json({ error: "Failed to fetch tokens" });
-    }
-  });
 
 // Endpoint to update the logoURI of a token ==> Third Requirement
 app.post("/addlogoURI", (req, res) => {
