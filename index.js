@@ -28,42 +28,6 @@ function authenticateToken(req, res, next) {
 // Construct the path to Tokens.json file
 const tokensFilePath = path.join(__dirname, "Tokens.json");
 
-// Helper function to fetch token details from the link
-const fetchTokens = async () => {
-  try {
-    const allTokens = [];
-    let nextPageParams = null;
-
-    do {
-      const url = nextPageParams
-        ? `https://sepolia.explorer.mode.network/api/v2/tokens?type=ERC-20&${new URLSearchParams(
-            nextPageParams
-          ).toString()}`
-        : "https://sepolia.explorer.mode.network/api/v2/tokens?type=ERC-20";
-
-      const response = await axios.get(url);
-      const responseData = response.data;
-
-      // Add the tokens from the current page to the list
-      allTokens.push(...responseData.items);
-
-      //   console.log(i);
-      //   console.log("responseData", responseData);
-
-      // Check if there are more pages available
-      nextPageParams = responseData.next_page_params;
-    } while (nextPageParams);
-
-    return { items: allTokens };
-  } catch (error) {
-    console.error(
-      "Error fetching tokens:",
-      error.response ? error.response.data : error.message
-    );
-    return [];
-  }
-};
-
 // Endpoint to fetch tokens from Tokens.json file ==> First Requirement
 app.get("/tokens", (req, res) => {
   try {
@@ -123,7 +87,7 @@ app.post("/addlogoURI", (req, res) => {
   }
 });
 
-// generate a new token with id and name
+// generate a new jwt-token with id and name
 app.post("/login", (req, res) => {
   // Assuming you have a user object with id and username
   const user = { id: 1, username: "Lampros" };
