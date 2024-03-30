@@ -73,47 +73,52 @@ app.post("/addlogoURI", (req, res) => {
 });
 
 // Endpoint to add new token to Tokens.json file ==> Fourth Requirement
-app.post("/tokenAddress", async (req, res) => {
-    try {
+const corsOptions = {
+  origin: "https://app.udonswap.org",
+};
+
+// Endpoint to add new token to Tokens.json file ==> Fourth Requirement
+app.post("/tokenAddress", cors(corsOptions), async (req, res) => {
+  try {
       const { address } = req.body;
-      console.log(address);
-      
+
       if (!address) {
-        return res.status(400).json({ error: "Missing token address in request body" });
+          return res.status(400).json({ error: "Missing token address in request body" });
       }
-  
+
       let updatedTokens = JSON.parse(fs.readFileSync(tokensFilePath, "utf8"));
-  
+
       // Check if token with given address already exists
       if (!updatedTokens.tokens.find((t) => t.address === address)) {
-        const response = await axios.get(
-          `https://sepolia.explorer.mode.network/api/v2/tokens/${address}`
-        );
-        const tokenData = response.data;
-        const token = {
-          chainId: 919,
-          address: tokenData.address,
-          symbol: tokenData.symbol,
-          name: tokenData.name,
-          decimals: Number(tokenData.decimals),
-          tags: ["ERC-20"],
-        };
-  
-        // Add logoURI if it's not null
-        if (tokenData.icon_url !== null) {
-          token.logoURI = tokenData.icon_url;
-        }
-  
-        updatedTokens.tokens.push(token);
-        fs.writeFileSync(tokensFilePath, JSON.stringify(updatedTokens, null, 2));
+          const response = await axios.get(
+              `https://sepolia.explorer.mode.network/api/v2/tokens/${address}`
+          );
+          const tokenData = response.data;
+          const token = {
+              chainId: 919,
+              address: tokenData.address,
+              symbol: tokenData.symbol,
+              name: tokenData.name,
+              decimals: Number(tokenData.decimals),
+              tags: ["ERC-20"],
+          };
+
+          // Add logoURI if it's not null
+          if (tokenData.icon_url !== null) {
+              token.logoURI = tokenData.icon_url;
+          }
+
+          updatedTokens.tokens.push(token);
+          fs.writeFileSync(tokensFilePath, JSON.stringify(updatedTokens, null, 2));
       }
-  
+
       res.json(updatedTokens.tokens);
-    } catch (error) {
+  } catch (error) {
       console.error("Error fetching or adding token:", error);
       return res.status(500).json({ error: "Failed to fetch or add token" });
-    }
-  });  
+  }
+});
+
 
 // Start the server;
 app.listen(port, () => {
