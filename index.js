@@ -3,27 +3,13 @@ const cors = require("cors");
 const fs = require("fs");
 const axios = require("axios");
 const path = require("path");
-const jwt = require("jsonwebtoken");
 
 const app = express();
-const port = 3000;
+const port = 3021;
 require("dotenv").config();
 
 app.use(express.json());
 app.use(cors());
-
-// Helper function to authenticate token
-function authenticateToken(req, res, next) {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
-  if (token == null) return res.sendStatus(401);
-
-  jwt.verify(token, process.env.SECRET_KEY, (err, user) => {
-    if (err) return res.sendStatus(403);
-    req.user = user;
-    next();
-  });
-}
 
 // Construct the path to Tokens.json file
 const tokensFilePath = path.join(__dirname, "Tokens.json");
@@ -87,26 +73,12 @@ app.post("/addlogoURI", (req, res) => {
   }
 });
 
-// generate a new jwt-token with id and name
-app.post("/login", (req, res) => {
-  // Assuming you have a user object with id and username
-  const user = { id: 1, username: "Lampros" };
-
-  // Sign the token using your secret key
-  jwt.sign({ user }, process.env.SECRET_KEY, (err, token) => {
-    if (err) {
-      console.error("Error signing token:", err);
-      return res.status(500).json({ error: "Failed to sign token" });
-    }
-    res.json({ token });
-  });
-});
-
 // Endpoint to add new token to Tokens.json file ==> Fourth Requirement
-app.post("/tokenAddress", authenticateToken, async (req, res) => {
+app.post("/tokenAddress", async (req, res) => {
     try {
       const { address } = req.body;
-  
+      console.log(address);
+      
       if (!address) {
         return res.status(400).json({ error: "Missing token address in request body" });
       }
