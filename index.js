@@ -8,8 +8,20 @@ const app = express();
 const port = 3021;
 require("dotenv").config();
 
+const allowedOrigins = ['https://app.udonswap.org/#/swap'];
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
-app.use(cors());
 
 // Construct the path to Tokens.json file
 const tokensFilePath = path.join(__dirname, "Tokens.json");
