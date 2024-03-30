@@ -8,7 +8,7 @@ const app = express();
 const port = 3021;
 require("dotenv").config();
 
-const allowedOrigins = ['https://app.udonswap.org/#/swap'];
+const allowedOrigins = ['https://app.udonswap.org/#/swap/','https://app.udonswap.org/','https://udonswap.org/'];
 
 const corsOptions = {
   origin: function (origin, callback) {
