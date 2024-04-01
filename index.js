@@ -110,9 +110,12 @@ app.post("/tokenAddress", cors(corsOptions), async (req, res) => {
 
           updatedTokens.tokens.push(token);
           fs.writeFileSync(tokensFilePath, JSON.stringify(updatedTokens, null, 2));
+          
+          // Send the updated tokens list as the response
+          res.json(updatedTokens.tokens);
+      } else {
+          res.status(400).json({ error: "Token already exists" });
       }
-
-      res.json(updatedTokens.tokens);
   } catch (error) {
       console.error("Error fetching or adding token:", error);
       return res.status(500).json({ error: "Failed to fetch or add token" });
