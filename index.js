@@ -74,7 +74,7 @@ app.post("/addlogoURI", (req, res) => {
 
 // Endpoint to add new token to Tokens.json file ==> Fourth Requirement
 const corsOptions = {
-  origin: "https://app.udonswap.org",
+  origin: "https://app.udonswap.org/#/swap",
 };
 
 // Endpoint to add new token to Tokens.json file ==> Fourth Requirement
