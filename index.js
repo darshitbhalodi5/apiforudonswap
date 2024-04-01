@@ -14,7 +14,7 @@ app.use(express.json());
 
 const checkOrigin = (req, res, next) => {
   const origin = req.headers.origin;
-  if (origin !== allowedOrigin) {
+  if (origin !== allowOrigin) {
     return res.status(403).json({ success: false, error: "Unauthorized access" });
   }
   next();
