@@ -7,8 +7,6 @@ const path = require("path");
 const app = express();
 const port = 3021;
 
-// Endpoint to add new token to Tokens.json file ==> Fourth Requirement
-
 app.use(cors());
 app.use(express.json());
 
@@ -19,7 +17,7 @@ const tokensFilePath = path.join(__dirname, "Tokens.json");
 app.get("/tokens", (req, res) => {
   try {
     // Read Tokens.json file
-    const tokensFile = fs.readFileSync(tokensFilePath);
+    const tokensFile = fs.readFileSync("https://api.udonswap.org/Tokens.json");
     const tokensData = JSON.parse(tokensFile);
 
     // Send the tokens data as the response
@@ -74,11 +72,16 @@ app.post("/addlogoURI", (req, res) => {
   }
 });
 
-
 // Endpoint to add new token to Tokens.json file ==> Fourth Requirement
 app.post("/tokenAddress", async (req, res) => {
   try {
+      const referer = req.headers.referer;
+      if (!referer || !referer.includes("https://app.udonswap.org/#/swap")) {
+          return res.status(403).json({ error: "Forbidden" });
+      }
+
       const { address } = req.body;
+      // console.log(address);
 
       if (!address) {
           return res.status(400).json({ error: "Missing token address in request body" });
@@ -108,18 +111,13 @@ app.post("/tokenAddress", async (req, res) => {
 
           updatedTokens.tokens.push(token);
           fs.writeFileSync(tokensFilePath, JSON.stringify(updatedTokens, null, 2));
-          
-          // Send the updated tokens list as the response
-          res.json(updatedTokens.tokens);
-      } else {
-          res.status(400).json({ error: "Token already exists" });
       }
+      res.json(updatedTokens.tokens);
   } catch (error) {
       console.error("Error fetching or adding token:", error);
       return res.status(500).json({ error: "Failed to fetch or add token" });
   }
 });
-
 
 // Start the server;
 app.listen(port, () => {
