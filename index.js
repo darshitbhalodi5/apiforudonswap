@@ -7,7 +7,7 @@ const path = require("path");
 const app = express();
 const port = 3021;
 
-const allowOrigin = "https://app.udonswap.org/#/swap";
+const allowOrigin = "https://app.udonswap.org/";
 
 app.use(cors({
   origin: allowOrigin,
@@ -21,7 +21,7 @@ const tokensFilePath = path.join(__dirname, "Tokens.json");
 app.get("/tokens", (req, res) => {
   try {
     // Read Tokens.json file
-    const tokensFile = fs.readFileSync("https://api.udonswap.org/Tokens.json");
+    const tokensFile = fs.readFileSync(tokensFilePath);
     const tokensData = JSON.parse(tokensFile);
 
     // Send the tokens data as the response
