@@ -7,7 +7,11 @@ const path = require("path");
 const app = express();
 const port = 3021;
 
-app.use(cors());
+const allowOrigin = "https://app.udonswap.org/#/swap";
+
+app.use(cors({
+  origin: allowOrigin,
+}));
 app.use(express.json());
 
 // Construct the path to Tokens.json file
@@ -73,12 +77,8 @@ app.post("/addlogoURI", (req, res) => {
 });
 
 // Endpoint to add new token to Tokens.json file ==> Fourth Requirement
-app.post("/tokenAddress", async (req, res) => {
+app.post("/tokenAddress",cors(allowOrigin), async (req, res) => {
   try {
-      const referer = req.headers.referer;
-      if (!referer || !referer.includes("https://app.udonswap.org/#/swap")) {
-          return res.status(403).json({ error: "Forbidden" });
-      }
 
       const { address } = req.body;
       // console.log(address);
