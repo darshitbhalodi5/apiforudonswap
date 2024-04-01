@@ -7,7 +7,12 @@ const path = require("path");
 const app = express();
 const port = 3021;
 
-app.use(cors());
+// Endpoint to add new token to Tokens.json file ==> Fourth Requirement
+const corsOptions = {
+  origin: "https://app.udonswap.org/#/swap",
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Construct the path to Tokens.json file
@@ -72,13 +77,9 @@ app.post("/addlogoURI", (req, res) => {
   }
 });
 
-// Endpoint to add new token to Tokens.json file ==> Fourth Requirement
-const corsOptions = {
-  origin: "https://app.udonswap.org/#/swap",
-};
 
 // Endpoint to add new token to Tokens.json file ==> Fourth Requirement
-app.post("/tokenAddress", cors(corsOptions), async (req, res) => {
+app.post("/tokenAddress", async (req, res) => {
   try {
       const { address } = req.body;
 
