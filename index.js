@@ -9,10 +9,16 @@ const port = 3021;
 
 const allowOrigin = "https://app.udonswap.org/";
 
-app.use(cors({
-  origin: allowOrigin,
-}));
+app.use(cors(allowOrigin));
 app.use(express.json());
+
+const checkOrigin = (req, res, next) => {
+  const origin = req.headers.origin;
+  if (origin !== allowedOrigin) {
+    return res.status(403).json({ success: false, error: "Unauthorized access" });
+  }
+  next();
+};
 
 // Construct the path to Tokens.json file
 const tokensFilePath = path.join(__dirname, "Tokens.json");
@@ -77,7 +83,7 @@ app.post("/addlogoURI", (req, res) => {
 });
 
 // Endpoint to add new token to Tokens.json file ==> Fourth Requirement
-app.post("/tokenAddress",cors(allowOrigin), async (req, res) => {
+app.post("/tokenAddress",checkOrigin, async (req, res) => {
   try {
 
       const { address } = req.body;
