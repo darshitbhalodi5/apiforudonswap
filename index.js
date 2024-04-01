@@ -8,11 +8,8 @@ const app = express();
 const port = 3021;
 
 // Endpoint to add new token to Tokens.json file ==> Fourth Requirement
-const corsOptions = {
-  origin: "https://app.udonswap.org/#/swap",
-};
 
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(express.json());
 
 // Construct the path to Tokens.json file
@@ -88,8 +85,9 @@ app.post("/tokenAddress", async (req, res) => {
       }
 
       let updatedTokens = JSON.parse(fs.readFileSync(tokensFilePath, "utf8"));
-      if(cors(corsOptions)){
-        if (!updatedTokens.tokens.find((t) => t.address === address)) {
+
+      // Check if token with given address already exists
+      if (!updatedTokens.tokens.find((t) => t.address === address)) {
           const response = await axios.get(
               `https://sepolia.explorer.mode.network/api/v2/tokens/${address}`
           );
@@ -116,10 +114,6 @@ app.post("/tokenAddress", async (req, res) => {
       } else {
           res.status(400).json({ error: "Token already exists" });
       }
-    }
-    else{
-      console.log("Not use the cors policy");
-    }
   } catch (error) {
       console.error("Error fetching or adding token:", error);
       return res.status(500).json({ error: "Failed to fetch or add token" });
